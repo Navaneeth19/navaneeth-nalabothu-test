@@ -1,1 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navaneeth Nalabothu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+  :root {
+    --red: #ff2200;
+    --dim-red: #7a1000;
+    --white: #f0ece4;
+    --black: #080808;
+    --grid: rgba(255,34,0,0.06);
+  }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  /* GRID BACKGROUND */
+  .grid-bg {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    animation: gridPulse 8s ease-in-out infinite;
+    z-index: 0;
+  }
+  @keyframes gridPulse {
+    0%,100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  /* SCANLINES */
+  .scanlines {
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.25) 2px,
+      rgba(0,0,0,0.25) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* NOISE OVERLAY */
+  .noise {
+    position: fixed; inset: 0;
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 99;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+  }
+
+  /* MAIN LAYOUT */
+  .stage {
+    position: relative; z-index: 10;
+    width: 100vw; height: 100vh;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: flex-start;
+    padding: 0 8vw;
+  }
+
+  /* CORNER TAG */
+  .corner-tag {
+    position: fixed;
+    top: 2rem; right: 2rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--dim-red);
+    text-transform: uppercase;
+    animation: blink 2.4s step-end infinite;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .corner-tag::before {
+    content: '● ';
+    color: var(--red);
+  }
+
+  /* EYEBROW */
+  .eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
+  }
+
+  /* NAME */
+  .name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 14vw, 13rem);
+    line-height: 0.88;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    position: relative;
+    opacity: 0;
+    animation: slideUp 0.8s cubic-bezier(0.16,1,0.3,1) 0.4s forwards;
+  }
+
+  .name .line { display: block; }
+
+  /* GLITCH EFFECT ON NAME */
+  .name::before,
+  .name::after {
+    content: attr(data-text);
+    position: absolute; top: 0; left: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: inherit;
+    line-height: inherit;
+    width: 100%;
+    overflow: hidden;
+    clip-path: inset(0 0 100% 0);
+  }
+  .name::before {
+    color: var(--red);
+    animation: glitch1 6s infinite 2s;
+  }
+  .name::after {
+    color: #00aaff;
+    animation: glitch2 6s infinite 2.1s;
+  }
+
+  @keyframes glitch1 {
+    0%,90%,100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+    91% { clip-path: inset(20% 0 60% 0); transform: translateX(-4px); }
+    93% { clip-path: inset(60% 0 10% 0); transform: translateX(4px); }
+    95% { clip-path: inset(40% 0 40% 0); transform: translateX(-2px); }
+    97% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  }
+  @keyframes glitch2 {
+    0%,90%,100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+    91% { clip-path: inset(50% 0 20% 0); transform: translateX(6px); }
+    93% { clip-path: inset(10% 0 70% 0); transform: translateX(-4px); }
+    95% { clip-path: inset(70% 0 5% 0); transform: translateX(3px); }
+    97% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  }
+
+  /* RED ACCENT STRIPE */
+  .stripe {
+    width: clamp(4rem, 12vw, 10rem);
+    height: 4px;
+    background: var(--red);
+    margin: 2rem 0;
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: stripeIn 0.6s cubic-bezier(0.16,1,0.3,1) 0.9s forwards;
+  }
+  @keyframes stripeIn {
+    to { opacity: 1; transform: scaleX(1); }
+  }
+
+  /* TAGLINE */
+  .tagline {
+    font-size: clamp(0.75rem, 1.4vw, 1rem);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(240,236,228,0.45);
+    max-width: 38ch;
+    line-height: 1.8;
+    opacity: 0;
+    animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) 1.1s forwards;
+  }
+
+  .tagline em {
+    font-style: italic;
+    color: var(--white);
+  }
+
+  /* COUNTER */
+  .counter-block {
+    margin-top: 3.5rem;
+    opacity: 0;
+    animation: slideUp 0.6s cubic-bezier(0.16,1,0.3,1) 1.3s forwards;
+    display: flex;
+    gap: 2.5rem;
+    align-items: flex-end;
+  }
+
+  .counter-unit { text-align: center; }
+
+  .counter-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    line-height: 1;
+    color: var(--white);
+    display: block;
+    min-width: 3ch;
+  }
+
+  .counter-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dim-red);
+    margin-top: 0.3rem;
+    display: block;
+  }
+
+  .counter-sep {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    color: var(--red);
+    line-height: 1;
+    margin-bottom: 0.45rem;
+    opacity: 0.5;
+  }
+
+  /* BOTTOM STATUS BAR */
+  .statusbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 2.5rem;
+    border-top: 1px solid rgba(255,34,0,0.2);
+    display: flex; align-items: center;
+    padding: 0 8vw;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(240,236,228,0.25);
+    z-index: 20;
+    animation: fadeIn 1s 1.8s forwards;
+    opacity: 0;
+  }
+
+  .statusbar .dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    background: var(--red);
+    border-radius: 50%;
+    margin-right: 0.6rem;
+    animation: blink 1.5s step-end infinite;
+  }
+
+  /* VERTICAL TEXT */
+  .vert-text {
+    position: fixed;
+    right: 2.5rem;
+    bottom: 4rem;
+    writing-mode: vertical-rl;
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(240,236,228,0.15);
+    z-index: 20;
+    opacity: 0;
+    animation: fadeIn 1s 2s forwards;
+  }
+
+  /* LARGE BG TEXT */
+  .bg-text {
+    position: fixed;
+    bottom: -0.1em; left: -0.02em;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32vw;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,34,0,0.06);
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    white-space: nowrap;
+  }
+
+  /* CURSOR TRAIL */
+  .cursor-dot {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: var(--red);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.05s;
+    mix-blend-mode: difference;
+  }
+
+  /* ANIMATIONS */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* HOVER EFFECT ON NAME */
+  .name:hover::before { animation: none; clip-path: inset(30% 0 50% 0); transform: translateX(-6px); }
+  .name:hover::after  { animation: none; clip-path: inset(60% 0 15% 0); transform: translateX(6px); }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="scanlines"></div>
+<div class="noise"></div>
+<div class="bg-text">NN</div>
+<div class="cursor-dot" id="dot"></div>
+
+<div class="corner-tag">Status: loading</div>
+
+<main class="stage">
+  <p class="eyebrow">Incoming — Stand By</p>
+
+  <h1 class="name" data-text="Navaneeth&#10;Nalabothu">
+    <span class="line">Navaneeth</span>
+    <span class="line">Nalabothu</span>
+  </h1>
+
+  <div class="stripe"></div>
+
+  <p class="tagline">
+    Something <em>new</em> is being forged.<br>
+    New project — arriving soon.
+  </p>
+
+  <div class="counter-block">
+    <div class="counter-unit">
+      <span class="counter-num" id="days">00</span>
+      <span class="counter-label">Days</span>
+    </div>
+    <span class="counter-sep">:</span>
+    <div class="counter-unit">
+      <span class="counter-num" id="hrs">00</span>
+      <span class="counter-label">Hours</span>
+    </div>
+    <span class="counter-sep">:</span>
+    <div class="counter-unit">
+      <span class="counter-num" id="mins">00</span>
+      <span class="counter-label">Mins</span>
+    </div>
+    <span class="counter-sep">:</span>
+    <div class="counter-unit">
+      <span class="counter-num" id="secs">00</span>
+      <span class="counter-label">Secs</span>
+    </div>
+  </div>
+</main>
+
+<div class="vert-text">navaneeth.dev · 2026</div>
+
+<footer class="statusbar">
+  <span><span class="dot"></span>Active — system nominal</span>
+  <span id="ts">--:--:--</span>
+  <span>v0.1.0-alpha</span>
+</footer>
+
+<script>
+  // CURSOR DOT
+  const dot = document.getElementById('dot');
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px';
+    dot.style.top = e.clientY + 'px';
+  });
+
+  // COUNTDOWN — target date (30 days from now, adjust as needed)
+  const target = new Date();
+  target.setDate(target.getDate() + 30);
+
+  function pad(n) { return String(Math.floor(n)).padStart(2,'0'); }
+
+  function tick() {
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+    const d = diff / 864e5;
+    const h = (diff % 864e5) / 36e5;
+    const m = (diff % 36e5) / 6e4;
+    const s = (diff % 6e4) / 1e3;
+    document.getElementById('days').textContent = pad(d);
+    document.getElementById('hrs').textContent  = pad(h);
+    document.getElementById('mins').textContent = pad(m);
+    document.getElementById('secs').textContent = pad(s);
+
+    // Timestamp
+    const t = new Date();
+    document.getElementById('ts').textContent =
+      t.toTimeString().slice(0,8);
+  }
+  setInterval(tick, 1000);
+  tick();
+
+  // GLITCH THE CORNER TAG
+  const tag = document.querySelector('.corner-tag');
+  const msgs = ['Status: loading','Status: standby','ERR: patience','Status: building','??? : ???'];
+  let mi = 0;
+  setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    tag.textContent = msgs[mi];
+  }, 3500);
+</script>
+</body>
+</html>
