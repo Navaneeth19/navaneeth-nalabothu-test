@@ -29,7 +29,6 @@ class ParticleSystem {
         this.particles = [];
         const count = this.width < 768 ? 30 : 80;
         const icons = ['⚖️', '📜', '🔨', '✒️'];
-        
         for (let i = 0; i < count; i++) {
             this.particles.push(new Particle(this.width, this.height, icons));
         }
@@ -39,20 +38,17 @@ class ParticleSystem {
         this.ctx.clearRect(0, 0, this.width, this.height);
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
-
         this.particles.forEach(p => {
             p.update(this.mouse);
             p.draw(this.ctx, color);
         });
-
         requestAnimationFrame(() => this.animate());
     }
 }
 
 class Particle {
     constructor(w, h, icons) {
-        this.w = w;
-        this.h = h;
+        this.w = w; this.h = h;
         this.x = Math.random() * w;
         this.y = Math.random() * h;
         this.icon = icons[Math.floor(Math.random() * icons.length)];
@@ -67,8 +63,6 @@ class Particle {
         this.x += this.speedX;
         this.y += this.speedY;
         this.rotation += this.rotationSpeed;
-
-        // Mouse repulsion
         if (mouse.x != null) {
             let dx = mouse.x - this.x;
             let dy = mouse.y - this.y;
@@ -78,8 +72,6 @@ class Particle {
                 this.y -= dy / 20;
             }
         }
-
-        // Wrap around
         if (this.x > this.w) this.x = 0;
         if (this.x < 0) this.x = this.w;
         if (this.y > this.h) this.y = 0;
