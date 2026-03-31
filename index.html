@@ -11,15 +11,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
     
     <!-- Styles -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./css/style.css">
     
-    <!-- GSAP for Animation -->
+    <!-- GSAP (Must load before local JS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/TextPlugin.min.js"></script>
 </head>
 <body>
 
-    <!-- Loading Screen -->
+    <!-- Loader -->
     <div id="loader">
         <div class="loader-content">
             <div class="gavel-icon">⚖️</div>
@@ -28,31 +27,26 @@
         </div>
     </div>
 
-    <!-- Custom Cursor -->
+    <!-- Cursor -->
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
-    <!-- Background Canvas -->
+    <!-- Background -->
     <canvas id="bg-canvas"></canvas>
-    
-    <!-- Noise Overlay -->
     <div class="noise-overlay"></div>
 
     <!-- Main Content -->
     <main class="container">
-        
-        <!-- Header -->
         <header>
             <div class="logo">NN<span>.</span></div>
             <nav>
-                <button id="theme-toggle" class="btn-glass">
+                <button id="theme-toggle" class="btn-glass hover-target">
                     <span class="icon">◑</span>
                     <span class="label">Theme</span>
                 </button>
             </nav>
         </header>
 
-        <!-- Hero Section -->
         <section class="hero">
             <div class="hero-badge">
                 <span class="dot"></span> PORTFOLIO COMING SOON
@@ -74,7 +68,6 @@
             </div>
         </section>
 
-        <!-- Footer -->
         <footer>
             <div class="socials">
                 <a href="#" class="social-link hover-target">LN</a>
@@ -83,13 +76,11 @@
             </div>
             <div class="copyright">© 2024 Legal Vanguard</div>
         </footer>
-
     </main>
 
-    <!-- Scripts (Modular) -->
-    <script src="js/audio.js"></script>
-    <script src="js/particles.js"></script>
-    <script src="js/animations.js"></script>
-    <script src="js/main.js"></script>
+    <!-- Scripts (Order Matters) -->
+    <script src="./js/audio.js"></script>
+    <script src="./js/particles.js"></script>
+    <script src="./js/main.js"></script>
 </body>
 </html>
