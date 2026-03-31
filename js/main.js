@@ -1,88 +1,62 @@
-class AudioEngine {
-    constructor() {
-        this.ctx = null;
-        this.enabled = false;
-    }
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Systems
+    const particles = new ParticleSystem();
+    
+    // Cursor Logic
+    const cursorDot = document.querySelector('.cursor-dot');
+    const cursorOutline = document.querySelector('.cursor-outline');
+    const hoverTargets = document.querySelectorAll('.hover-target');
 
-    init() {
-        if (!this.ctx) {
-            this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-            this.enabled = true;
-        }
-        if (this.ctx.state === 'suspended') {
-            this.ctx.resume();
-        }
-    }
-
-    // Sound: High tech UI hover
-    playHover() {
-        if (!this.enabled) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+    document.addEventListener('mousemove', (e) => {
+        cursorDot.style.left = e.clientX + 'px';
+        cursorDot.style.top = e.clientY + 'px';
         
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(400, t);
-        osc.frequency.exponentialRampToValueAtTime(800, t + 0.1);
-        
-        gain.gain.setValueAtTime(0.05, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-        
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.1);
-    }
+        // Lag effect for outline
+        setTimeout(() => {
+            cursorOutline.style.left = e.clientX + 'px';
+            cursorOutline.style.top = e.clientY + 'px';
+        }, 50);
+    });
 
-    // Sound: Gavel Slam (Bass + Noise)
-    playGavel() {
-        if (!this.enabled) return;
-        const t = this.ctx.currentTime;
-        
-        // Bass Thud
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(150, t);
-        osc.frequency.exponentialRampToValueAtTime(0.01, t + 0.5);
-        gain.gain.setValueAtTime(1, t);
-        gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.5);
+    hoverTargets.forEach(target => {
+        target.addEventListener('mouseenter', () => {
+            cursorOutline.classList.add('active');
+            audio.playHover();
+        });
+        target.addEventListener('mouseleave', () => {
+            cursorOutline.classList.remove('active');
+        });
+    });
 
-        // Click
-        const noiseBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate * 0.05, this.ctx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < output.length; i++) output[i] = Math.random() * 2 - 1;
-        
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = noiseBuffer;
-        const noiseGain = this.ctx.createGain();
-        noiseGain.gain.setValueAtTime(0.5, t);
-        noiseGain.gain.exponentialRampToValueAtTime(0.01, t + 0.05);
-        noise.connect(noiseGain);
-        noiseGain.connect(this.ctx.destination);
-        noise.start(t);
-    }
+    // Theme Toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    themeBtn.addEventListener('click', () => {
+        audio.playHover();
+        const current = html.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', next);
+        themeBtn.querySelector('.label').textContent = next === 'dark' ? 'Dark' : 'Light';
+    });
 
-    // Sound: Success Chime
-    playSuccess() {
-        if (!this.enabled) return;
-        const t = this.ctx.currentTime;
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(500, t);
-        osc.frequency.setValueAtTime(1000, t + 0.1);
-        gain.gain.setValueAtTime(0.1, t);
-        gain.gain.linearRampToValueAtTime(0, t + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start(t);
-        osc.stop(t + 0.3);
-    }
-}
+    // Notify Button
+    document.querySelector('.btn-primary').addEventListener('click', () => {
+        audio.playSuccess();
+        const btn = document.querySelector('.btn-primary');
+        const originalText = btn.textContent;
+        btn.textContent = "You're on the list!";
+        setTimeout(() => btn.textContent = originalText, 2000);
+    });
 
-const audio = new AudioEngine();
+    // Initialize Audio on first click anywhere
+    document.body.addEventListener('click', () => {
+        audio.init();
+    }, { once: true });
+
+    // Run Animations
+    setTimeout(() => {
+        runIntroAnimation();
+        setupParallax();
+    }, 500);
+});
