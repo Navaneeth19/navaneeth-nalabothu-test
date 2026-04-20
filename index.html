@@ -1,86 +1,523 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Navaneeth Nalabothu | Legal Vanguard</title>
-    
-    <!-- Fonts -->
+    <title>Navaneeth Nalabothu — Legal Vanguard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;500;800&display=swap" rel="stylesheet">
-    
-    <!-- Styles -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;900&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
-    
-    <!-- GSAP (Must load before local JS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
-    <!-- Loader -->
-    <div id="loader">
-        <div class="loader-content">
-            <div class="gavel-icon">⚖️</div>
-            <div class="loader-text">INITIALIZING JUSTICE...</div>
-            <div class="loader-bar"><div class="loader-progress"></div></div>
-        </div>
+<!-- ═══ CURSOR ═══ -->
+<div class="cursor-ring"></div>
+<div class="cursor-dot"></div>
+
+<!-- ═══ LOADER ═══ -->
+<div id="loader">
+    <div class="loader-inner">
+        <svg class="scales-svg" viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line class="scales-beam" x1="20" y1="40" x2="180" y2="40" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="100" y1="10" x2="100" y2="40" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="100" cy="10" r="3" fill="currentColor"/>
+            <line x1="40" y1="40" x2="40" y2="70" stroke="currentColor" stroke-width="1"/>
+            <line x1="160" y1="40" x2="160" y2="70" stroke="currentColor" stroke-width="1"/>
+            <ellipse class="scales-pan-l" cx="40" cy="75" rx="22" ry="6" stroke="currentColor" stroke-width="1"/>
+            <ellipse class="scales-pan-r" cx="160" cy="75" rx="22" ry="6" stroke="currentColor" stroke-width="1"/>
+            <line x1="100" y1="130" x2="100" y2="155" stroke="currentColor" stroke-width="1.5"/>
+            <line x1="80" y1="155" x2="120" y2="155" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        <div class="loader-phrase">ORDER IN THE COURT</div>
+        <div class="loader-bar-wrap"><div class="loader-bar-fill"></div></div>
+        <div class="loader-case">CASE NO. 2025-NN-001</div>
     </div>
+</div>
 
-    <!-- Cursor -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
+<!-- ═══ FIXED LAYERS ═══ -->
+<canvas id="canvas-bg"></canvas>
+<canvas id="canvas-ink"></canvas>
+<div class="vignette"></div>
+<div class="scanlines"></div>
 
-    <!-- Background -->
-    <canvas id="bg-canvas"></canvas>
-    <div class="noise-overlay"></div>
+<!-- ═══ VERDICT STAMP ═══ -->
+<div class="verdict-stamp" id="verdict-stamp">
+    <div class="stamp-inner">
+        <div class="stamp-text">ADMITTED</div>
+        <div class="stamp-sub">TO THE BAR</div>
+        <div class="stamp-ring"></div>
+        <div class="stamp-ring stamp-ring-2"></div>
+    </div>
+</div>
 
-    <!-- Main Content -->
-    <main class="container">
-        <header>
-            <div class="logo">NN<span>.</span></div>
-            <nav>
-                <button id="theme-toggle" class="btn-glass hover-target">
-                    <span class="icon">◑</span>
-                    <span class="label">Theme</span>
-                </button>
-            </nav>
-        </header>
+<!-- ═══ FIXED HEADER ═══ -->
+<header class="site-header">
+    <div class="logo-mark">
+        <span class="logo-nn">NN</span>
+        <span class="logo-sep">|</span>
+        <span class="logo-title">Legal Vanguard</span>
+    </div>
+    <nav class="site-nav">
+        <a href="#credentials" class="nav-link mag-btn">Credentials</a>
+        <a href="#timeline"    class="nav-link mag-btn">Timeline</a>
+        <a href="#contact"     class="nav-link mag-btn">Contact</a>
+    </nav>
+    <div class="header-right">
+        <div class="case-ticker">
+            <span class="ticker-label">DOCKET</span>
+            <span class="ticker-val">2025-NN-001</span>
+        </div>
+        <button class="btn-gavel" id="gavel-btn" aria-label="Strike gavel">
+            <span class="gavel-icon-wrap">🔨</span>
+            <span>Strike</span>
+        </button>
 
-        <section class="hero">
-            <div class="hero-badge">
-                <span class="dot"></span> PORTFOLIO COMING SOON
+    </div>
+</header>
+
+<!-- ═══ SCROLL CONTAINER ═══ -->
+<div class="scroll-wrap" id="scroll-wrap">
+
+    <!-- ══ SECTION 1: HERO ══ -->
+    <section class="s-hero" id="hero">
+
+        <div class="hero-meta reveal-left">
+            <div class="meta-block">
+                <div class="meta-label">Jurisdiction</div>
+                <div class="meta-val">Design &amp; Motion Law</div>
             </div>
-            
-            <div class="title-wrapper">
-                <h1 class="line-1">Navaneeth</h1>
-                <h1 class="line-2">Nalabothu</h1>
+            <div class="meta-block">
+                <div class="meta-label">Filed</div>
+                <div class="meta-val">2023 — Present</div>
             </div>
+            <div class="meta-block">
+                <div class="meta-label">Status</div>
+                <div class="meta-val status-live"><span class="pulse-ring"></span>Active</div>
+            </div>
+            <div class="meta-block">
+                <div class="meta-label">Counsel</div>
+                <div class="meta-val">Navaneeth Nalabothu</div>
+            </div>
+            <div class="meta-block">
+                <div class="meta-label">LNAT Score</div>
+                <div class="meta-val lnat-score">34</div>
+            </div>
+            <div class="meta-divider"></div>
+            <div class="meta-block">
+                <div class="meta-label">Countdown</div>
+                <div class="meta-val countdown-val" id="countdown-val">—</div>
+            </div>
+        </div>
 
-            <p class="subtitle">
-                Design. Motion. <span class="highlight">Law.</span><br>
-                Where creativity meets the gavel.
+        <div class="hero-center">
+            <div class="eyebrow">
+                <span class="eyebrow-line"></span>
+                <span class="eyebrow-text">The Court Presents</span>
+                <span class="eyebrow-line"></span>
+            </div>
+            <div class="name-block">
+                <div class="name-line" id="name-line-1"><span class="name-char-wrap">Navaneeth</span></div>
+                <div class="name-line name-line-hollow" id="name-line-2"><span class="name-char-wrap">Nalabothu</span></div>
+            </div>
+            <div class="tagline">
+                <span class="tag-word">Design</span>
+                <span class="tag-dot">·</span>
+                <span class="tag-word">Motion</span>
+                <span class="tag-dot">·</span>
+                <span class="tag-word accent-word">Law</span>
+            </div>
+            <p class="sub-copy">
+                Where the weight of the gavel meets the precision of design.<br>
+                <em>A portfolio forged in argument and craft.</em>
             </p>
-
-            <div class="cta-group">
-                <button class="btn-primary hover-target">Notify Me</button>
-                <button class="btn-secondary hover-target">View Resume</button>
+            <div class="cta-row">
+                <button class="btn-primary mag-btn" id="notify-btn">
+                    <span class="btn-bg"></span>
+                    <span class="btn-label">Notify Me</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+                <a href="#credentials" class="btn-outline mag-btn">
+                    <span class="btn-label">View Work</span>
+                </a>
             </div>
-        </section>
+        </div>
 
-        <footer>
-            <div class="socials">
-                <a href="#" class="social-link hover-target">LN</a>
-                <a href="#" class="social-link hover-target">TW</a>
-                <a href="#" class="social-link hover-target">IG</a>
+        <div class="hero-aside reveal-right">
+            <div class="aside-title">Exhibit A</div>
+            <div class="typewriter-block" id="typewriter"></div>
+            <div class="aside-seal">
+                <svg viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="36" stroke="currentColor" stroke-width="0.8" stroke-dasharray="4 3"/>
+                    <circle cx="40" cy="40" r="28" stroke="currentColor" stroke-width="0.5"/>
+                    <text x="40" y="37" text-anchor="middle" font-size="6" fill="currentColor" font-family="Cinzel">LEGAL</text>
+                    <text x="40" y="47" text-anchor="middle" font-size="6" fill="currentColor" font-family="Cinzel">VANGUARD</text>
+                </svg>
             </div>
-            <div class="copyright">© 2024 Legal Vanguard</div>
-        </footer>
-    </main>
+        </div>
 
-    <!-- Scripts (Order Matters) -->
-    <script src="./js/audio.js"></script>
-    <script src="./js/particles.js"></script>
-    <script src="./js/main.js"></script>
+        <div class="scroll-cue">
+            <span class="scroll-cue-text">Scroll to Review Evidence</span>
+            <span class="scroll-cue-arrow">↓</span>
+        </div>
+    </section>
+
+    <!-- ══ SECTION 2: CREDENTIALS ══ -->
+    <section class="s-credentials" id="credentials">
+        <div class="section-header">
+            <div class="section-rule"></div>
+            <div class="section-label">§ I — Credentials &amp; Roles</div>
+            <div class="section-rule"></div>
+        </div>
+
+        <!-- Logo strip — real brand logos -->
+        <div class="logo-strip reveal-up" data-delay="0">
+            <div class="strip-label">Associated With</div>
+            <div class="strip-logos">
+
+                <!-- Cornell Law — Big Red C -->
+                <a class="strip-logo-item" href="https://www.law.cornell.edu" target="_blank" rel="noopener" title="Cornell Law School">
+                    <svg class="org-logo" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M28 4C16 4 8 11 8 18C8 25 16 32 28 32C33 32 37.5 30.2 40.5 27L35.5 23.5C33.5 25.5 31 26.5 28 26.5C20.5 26.5 14.5 23 14.5 18C14.5 13 20.5 9.5 28 9.5C31 9.5 33.5 10.5 35.5 12.5L40.5 9C37.5 5.8 33 4 28 4Z" fill="#B31B1B"/>
+                        <text x="48" y="16" font-family="Georgia,serif" font-size="12" fill="currentColor" font-weight="700" letter-spacing=".5">CORNELL</text>
+                        <text x="48" y="29" font-family="Georgia,serif" font-size="8.5" fill="currentColor" opacity=".6" letter-spacing="1.5">LAW SCHOOL</text>
+                    </svg>
+                </a>
+
+                <!-- CAM — gold orb cluster on Prussian blue, Justinian-inspired -->
+                <a class="strip-logo-item" href="https://www.cyrilshroff.com" target="_blank" rel="noopener" title="Cyril Amarchand Mangaldas">
+                    <svg class="org-logo" viewBox="0 0 160 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="0" y="0" width="36" height="36" rx="5" fill="#1B2A4A"/>
+                        <circle cx="18" cy="18" r="6"   fill="#C9A84C"/>
+                        <circle cx="18" cy="6"  r="2.8" fill="#C9A84C"/>
+                        <circle cx="18" cy="30" r="2.8" fill="#C9A84C"/>
+                        <circle cx="6"  cy="18" r="2.8" fill="#C9A84C"/>
+                        <circle cx="30" cy="18" r="2.8" fill="#C9A84C"/>
+                        <circle cx="9"  cy="9"  r="2.2" fill="#C9A84C"/>
+                        <circle cx="27" cy="9"  r="2.2" fill="#C9A84C"/>
+                        <circle cx="9"  cy="27" r="2.2" fill="#C9A84C"/>
+                        <circle cx="27" cy="27" r="2.2" fill="#C9A84C"/>
+                        <text x="44" y="15" font-family="Georgia,serif" font-size="10" fill="currentColor" font-weight="700" letter-spacing=".3">CYRIL AMARCHAND</text>
+                        <text x="44" y="28" font-family="Georgia,serif" font-size="10" fill="currentColor" font-weight="700" letter-spacing=".3">MANGALDAS</text>
+                    </svg>
+                </a>
+
+                <!-- React — official cyan atom -->
+                <a class="strip-logo-item" href="https://react.dev" target="_blank" rel="noopener" title="React">
+                    <svg class="org-logo tech-logo" viewBox="0 0 60 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="30" cy="18" rx="22" ry="8" stroke="#61DAFB" stroke-width="1.8"/>
+                        <ellipse cx="30" cy="18" rx="22" ry="8" stroke="#61DAFB" stroke-width="1.8" transform="rotate(60 30 18)"/>
+                        <ellipse cx="30" cy="18" rx="22" ry="8" stroke="#61DAFB" stroke-width="1.8" transform="rotate(120 30 18)"/>
+                        <circle cx="30" cy="18" r="3.5" fill="#61DAFB"/>
+                    </svg>
+                </a>
+
+                <!-- Supabase — green bolt -->
+                <a class="strip-logo-item" href="https://supabase.com" target="_blank" rel="noopener" title="Supabase">
+                    <svg class="org-logo tech-logo" viewBox="0 0 44 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M26 2L12 22H22L18 34L32 14H22Z" fill="#3ECF8E"/>
+                    </svg>
+                </a>
+
+                <!-- ISDS — speech podium, clean -->
+                <a class="strip-logo-item" href="https://indianschoolsdebatingsociety.com" target="_blank" rel="noopener" title="Indian Schools Debating Society">
+                    <svg class="org-logo" viewBox="0 0 150 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Podium shape -->
+                        <path d="M8 30 L8 18 L16 18 L16 30 Z" stroke="currentColor" stroke-width="1.3" fill="none" opacity=".8"/>
+                        <path d="M5 30 L19 30" stroke="currentColor" stroke-width="1.3" opacity=".7"/>
+                        <path d="M10 18 C10 14 14 14 14 18" stroke="currentColor" stroke-width="1.3" fill="none" opacity=".8"/>
+                        <circle cx="12" cy="10" r="3.5" stroke="currentColor" stroke-width="1.3" fill="none" opacity=".8"/>
+                        <text x="26" y="16" font-family="Georgia,serif" font-size="10" fill="currentColor" font-weight="700" letter-spacing=".3">INDIAN SCHOOLS</text>
+                        <text x="26" y="29" font-family="Georgia,serif" font-size="9" fill="currentColor" opacity=".7" letter-spacing=".5">DEBATING SOCIETY</text>
+                    </svg>
+                </a>
+
+                <!-- DLSA — Ashoka Chakra in saffron -->
+                <a class="strip-logo-item" href="https://telangana.nalsa.gov.in" target="_blank" rel="noopener" title="District Legal Services Authority">
+                    <svg class="org-logo" viewBox="0 0 160 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="18" cy="18" r="14" stroke="#FF9933" stroke-width="1.3" fill="none" opacity=".8"/>
+                        <circle cx="18" cy="18" r="4"  stroke="#FF9933" stroke-width="1"   fill="none" opacity=".9"/>
+                        <line x1="18" y1="4"  x2="18" y2="32" stroke="#FF9933" stroke-width=".8" opacity=".55"/>
+                        <line x1="4"  y1="18" x2="32" y2="18" stroke="#FF9933" stroke-width=".8" opacity=".55"/>
+                        <line x1="8"  y1="8"  x2="28" y2="28" stroke="#FF9933" stroke-width=".8" opacity=".55"/>
+                        <line x1="28" y1="8"  x2="8"  y2="28" stroke="#FF9933" stroke-width=".8" opacity=".55"/>
+                        <text x="38" y="16" font-family="Georgia,serif" font-size="10" fill="currentColor" font-weight="700" letter-spacing=".3">DISTRICT LEGAL</text>
+                        <text x="38" y="29" font-family="Georgia,serif" font-size="9"  fill="currentColor" opacity=".7" letter-spacing=".5">SERVICES AUTHORITY</text>
+                    </svg>
+                </a>
+
+            </div>
+        </div>
+
+        <div class="credentials-grid">
+
+            <div class="cred-card reveal-up" data-delay="0">
+                <div class="cred-accent">
+                    <svg viewBox="0 0 44 44" fill="none"><path d="M36 11C32 7 27 5 22 5C11 5 4 12 4 22C4 32 11 39 22 39C27 39 32 37 36 33L30 28.5C27.5 31 25 32 22 32C15 32 12 27.5 12 22C12 16.5 15 12 22 12C25 12 27.5 13 30 15.5Z" fill="#B31B1B"/></svg>
+                </div>
+                <div class="cred-body">
+                    <div class="cred-role">Research Co-Author</div>
+                    <div class="cred-org">Cornell Law School · Prof. James Grimmelmann</div>
+                    <div class="cred-assoc">Co-authored independent research on EdTech data privacy compliance — identifying systemic FERPA, COPPA &amp; GDPR gaps across major school platforms.</div>
+                    <div class="cred-tags">
+                        <span class="tag">Data Privacy</span><span class="tag">EdTech</span><span class="tag">Cornell Law</span>
+                    </div>
+                </div>
+                <div class="cred-sweep"></div>
+            </div>
+
+            <div class="cred-card cred-card--highlight reveal-up" data-delay="80">
+                <div class="cred-accent cred-accent--stat">
+                    <span class="cred-stat">34</span>
+                    <span class="cred-stat-sub">LNAT</span>
+                </div>
+                <div class="cred-body">
+                    <div class="cred-role">LNAT Score — Top Global Percentile</div>
+                    <div class="cred-org">Law National Aptitude Test · 2026</div>
+                    <div class="cred-assoc">Scored 34/42 — meeting the threshold for Oxford, Cambridge, UCL &amp; King's College London admissions.</div>
+                    <div class="cred-tags">
+                        <span class="tag tag--gold">Oxford · Cambridge Threshold</span>
+                    </div>
+                </div>
+                <div class="cred-sweep"></div>
+            </div>
+
+            <div class="cred-card reveal-up" data-delay="160">
+                <div class="cred-accent">
+                    <svg viewBox="0 0 44 44" fill="none"><ellipse cx="22" cy="22" rx="18" ry="7" stroke="#61DAFB" stroke-width="1.5"/><ellipse cx="22" cy="22" rx="18" ry="7" stroke="#61DAFB" stroke-width="1.5" transform="rotate(60 22 22)"/><ellipse cx="22" cy="22" rx="18" ry="7" stroke="#61DAFB" stroke-width="1.5" transform="rotate(120 22 22)"/><circle cx="22" cy="22" r="3" fill="#61DAFB"/></svg>
+                </div>
+                <div class="cred-body">
+                    <div class="cred-role">Co-Lead Developer &amp; System Architect</div>
+                    <div class="cred-org">Cornerstone SchoolSync — "Stitch"</div>
+                    <div class="cred-assoc">Architected and co-leading a compliance-first school management platform on React &amp; Supabase — currently in active deployment.</div>
+                    <div class="cred-tags">
+                        <span class="tag">React</span><span class="tag">Supabase</span><span class="tag">System Design</span>
+                    </div>
+                </div>
+                <div class="cred-sweep"></div>
+            </div>
+
+            <div class="cred-card reveal-up" data-delay="240">
+                <div class="cred-accent">
+                    <svg viewBox="0 0 44 44" fill="none"><rect x="1" y="1" width="42" height="42" rx="6" fill="#1B2A4A"/><circle cx="22" cy="22" r="7" fill="#C9A84C"/><circle cx="22" cy="9" r="3" fill="#C9A84C"/><circle cx="22" cy="35" r="3" fill="#C9A84C"/><circle cx="9" cy="22" r="3" fill="#C9A84C"/><circle cx="35" cy="22" r="3" fill="#C9A84C"/><circle cx="12" cy="12" r="2.5" fill="#C9A84C"/><circle cx="32" cy="12" r="2.5" fill="#C9A84C"/><circle cx="12" cy="32" r="2.5" fill="#C9A84C"/><circle cx="32" cy="32" r="2.5" fill="#C9A84C"/></svg>
+                </div>
+                <div class="cred-body">
+                    <div class="cred-role">Legal Discovery Intern</div>
+                    <div class="cred-org">Cyril Amarchand Mangaldas · India's #1 Law Firm</div>
+                    <div class="cred-assoc">Digital forensics indexing for corporate defence at CAM Hyderabad — working alongside senior associates on active high-stakes mandates.</div>
+                    <div class="cred-tags">
+                        <span class="tag">Legal Discovery</span><span class="tag">Digital Forensics</span><span class="tag">CAM</span>
+                    </div>
+                </div>
+                <div class="cred-sweep"></div>
+            </div>
+
+            <div class="cred-card reveal-up" data-delay="320">
+                <div class="cred-accent">
+                    <svg viewBox="0 0 44 44" fill="none"><circle cx="22" cy="11" r="4" stroke="currentColor" stroke-width="1.3" fill="none" opacity=".8"/><path d="M18 19C18 15 26 15 26 19L26 34L18 34Z" stroke="currentColor" stroke-width="1.3" fill="none" opacity=".8"/><line x1="14" y1="34" x2="30" y2="34" stroke="currentColor" stroke-width="1.3" opacity=".7"/><circle cx="19" cy="26" r="1" fill="currentColor" opacity=".5"/><circle cx="22" cy="26" r="1" fill="currentColor" opacity=".5"/><circle cx="25" cy="26" r="1" fill="currentColor" opacity=".5"/></svg>
+                </div>
+                <div class="cred-body">
+                    <div class="cred-role">Appellate Strategist</div>
+                    <div class="cred-org">Indian Schools Debating Society · World Champions 2025</div>
+                    <div class="cred-assoc">National programme alumnus. Specialises in cyber-law &amp; data privacy motions — ISDS produced India's 2025 World Schools Debating Champions.</div>
+                    <div class="cred-tags">
+                        <span class="tag">Appellate</span><span class="tag">Cyber-Law</span><span class="tag">ISDS</span>
+                    </div>
+                </div>
+                <div class="cred-sweep"></div>
+            </div>
+
+            <div class="cred-card reveal-up" data-delay="400">
+                <div class="cred-accent">
+                    <svg viewBox="0 0 44 44" fill="none"><circle cx="22" cy="22" r="17" stroke="#FF9933" stroke-width="1.3" fill="none" opacity=".8"/><circle cx="22" cy="22" r="4" stroke="#FF9933" stroke-width="1" fill="none" opacity=".9"/><line x1="22" y1="5" x2="22" y2="39" stroke="#FF9933" stroke-width=".8" opacity=".55"/><line x1="5" y1="22" x2="39" y2="22" stroke="#FF9933" stroke-width=".8" opacity=".55"/><line x1="9.9" y1="9.9" x2="34.1" y2="34.1" stroke="#FF9933" stroke-width=".8" opacity=".55"/><line x1="34.1" y1="9.9" x2="9.9" y2="34.1" stroke="#FF9933" stroke-width=".8" opacity=".55"/></svg>
+                </div>
+                <div class="cred-body">
+                    <div class="cred-role">Pro-Bono Intake Volunteer</div>
+                    <div class="cred-org">DLSA Hyderabad · Nyaya Seva Sadan</div>
+                    <div class="cred-assoc">Intake documentation for free legal aid at Hyderabad's primary access-to-justice centre — direct exposure to ground-level Indian legal practice.</div>
+                    <div class="cred-tags">
+                        <span class="tag">Pro-Bono</span><span class="tag">Access to Justice</span><span class="tag">DLSA</span>
+                    </div>
+                </div>
+                <div class="cred-sweep"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ══ SECTION 3: TIMELINE ══ -->
+    <section class="s-timeline" id="timeline">
+        <div class="section-header">
+            <div class="section-rule"></div>
+            <div class="section-label">§ II — Case History · 2023–2026</div>
+            <div class="section-rule"></div>
+        </div>
+
+        <div class="timeline-track">
+
+            <div class="timeline-item reveal-left" data-year="2023">
+                <div class="tl-year-col">
+                    <div class="tl-year">2023</div>
+                    <div class="tl-grade">Grade 7</div>
+                </div>
+                <div class="tl-connector">
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                    <div class="tl-event">
+                        <div class="tl-event-title">ISDS National Training Programme</div>
+                        <div class="tl-event-desc">Inducted into the Indian Schools Debating Society national training programme — the beginning of a specialisation in cyber-law and data privacy advocacy.</div>
+                    </div>
+                    <div class="tl-event">
+                        <div class="tl-event-title">Full-Stack Development</div>
+                        <div class="tl-event-desc">Commenced self-directed study in full-stack web development, focusing on React and Supabase.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item reveal-right" data-year="2024">
+                <div class="tl-year-col">
+                    <div class="tl-year">2024</div>
+                    <div class="tl-grade">Grade 8</div>
+                </div>
+                <div class="tl-connector">
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                    <div class="tl-event">
+                        <div class="tl-event-title">DLSA Hyderabad — Pro-Bono Volunteer</div>
+                        <div class="tl-event-desc">Commenced volunteering at Nyaya Seva Sadan, assisting with preliminary intake documentation for local disputes and access-to-justice initiatives.</div>
+                    </div>
+                    <div class="tl-event">
+                        <div class="tl-event-title">Independent EdTech Compliance Audits</div>
+                        <div class="tl-event-desc">Conducted independent audits of Terms of Service and EULAs for major educational software platforms, identifying data privacy compliance gaps.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item reveal-left" data-year="2025">
+                <div class="tl-year-col">
+                    <div class="tl-year">2025</div>
+                    <div class="tl-grade">Grade 9</div>
+                </div>
+                <div class="tl-connector">
+                    <div class="tl-dot"></div>
+                    <div class="tl-line"></div>
+                </div>
+                <div class="tl-content">
+                    <div class="tl-event">
+                        <div class="tl-event-title">Cornell Law — Co-Authored Research Paper</div>
+                        <div class="tl-event-desc">Co-authored the EdTech data compliance research paper under the mentorship of Professor James Grimmelmann, Cornell Law School, examining regulatory gaps in student data protection.</div>
+                    </div>
+                    <div class="tl-event">
+                        <div class="tl-event-title">Stitch — System Architecture Initiated</div>
+                        <div class="tl-event-desc">Initiated the conceptualisation, system architecture, and database structuring for "Stitch" — a compliance-first school management platform.</div>
+                    </div>
+                    <div class="tl-event">
+                        <div class="tl-event-title">ISDS National Competition</div>
+                        <div class="tl-event-desc">Competed nationally with ISDS, specialising in cyber-law and data privacy motions at the appellate level.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="timeline-item reveal-right tl-current" data-year="2026">
+                <div class="tl-year-col">
+                    <div class="tl-year">2026</div>
+                    <div class="tl-grade">Grade 10</div>
+                    <div class="tl-current-badge">Current</div>
+                </div>
+                <div class="tl-connector">
+                    <div class="tl-dot tl-dot--active"></div>
+                </div>
+                <div class="tl-content">
+                    <div class="tl-event tl-event--highlight">
+                        <div class="tl-event-title">LNAT Score: 34</div>
+                        <div class="tl-event-desc">Achieved an LNAT score of 34 — a significant milestone toward top-tier law school admission.</div>
+                    </div>
+                    <div class="tl-event tl-event--highlight">
+                        <div class="tl-event-title">Stitch — Active Development &amp; Deployment</div>
+                        <div class="tl-event-desc">Co-leading active development, compliance auditing, and deployment of Stitch as Co-Lead Developer and System Architect.</div>
+                    </div>
+                    <div class="tl-event tl-event--highlight">
+                        <div class="tl-event-title">Cyril Amarchand Mangaldas — Legal Discovery Intern</div>
+                        <div class="tl-event-desc">Commenced legal discovery internship at CAM Hyderabad, assisting with digital forensics indexing for corporate defence cases.</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ══ SECTION 4: CONTACT ══ -->
+    <section class="s-contact" id="contact">
+        <div class="section-header">
+            <div class="section-rule"></div>
+            <div class="section-label">§ III — Chambers</div>
+            <div class="section-rule"></div>
+        </div>
+        <div class="contact-inner reveal-up">
+            <p class="contact-copy">
+                Portfolio in active development.<br>
+                <em>The brief is being prepared.</em>
+            </p>
+            <div class="contact-cta">
+                <button class="btn-primary mag-btn" id="notify-btn-2">
+                    <span class="btn-bg"></span>
+                    <span class="btn-label">Notify Me at Launch</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </div>
+            <div class="contact-socials">
+                <a href="#" class="social-link mag-btn" target="_blank" rel="noopener">
+                    <svg class="social-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="9" width="4" height="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+                    LinkedIn
+                </a>
+                <span class="social-sep">·</span>
+                <a href="#" class="social-link mag-btn" target="_blank" rel="noopener">
+                    <svg class="social-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4l16 16M4 20L20 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 5h7l11 14H14L3 5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                    Twitter / X
+                </a>
+                <span class="social-sep">·</span>
+                <a href="https://www.instagram.com/iwannabe3again/" class="social-link mag-btn" target="_blank" rel="noopener">
+                    <svg class="social-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+                    Instagram
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ FOOTER ══ -->
+    <footer class="site-footer">
+        <div class="footer-left">
+            <span class="footer-rule">© 2025 Navaneeth Nalabothu — All Rights Reserved</span>
+        </div>
+        <div class="footer-socials">
+            <a href="#" class="footer-social" target="_blank" rel="noopener" title="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="9" width="4" height="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="4" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+            </a>
+            <a href="#" class="footer-social" target="_blank" rel="noopener" title="Twitter / X">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4l16 16M4 20L20 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M3 5h7l11 14H14L3 5z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="https://www.instagram.com/iwannabe3again/" class="footer-social" target="_blank" rel="noopener" title="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+            </a>
+        </div>
+        <div class="footer-right">
+            <span class="footer-article">Art. I § 1 — Legal Vanguard</span>
+        </div>
+    </footer>
+
+</div><!-- /scroll-wrap -->
+
+<!-- Shockwave -->
+<div class="shockwave" id="shockwave"></div>
+
+<script src="./js/audio.js"></script>
+<script src="./js/particles.js"></script>
+<script src="./js/main.js"></script>
 </body>
 </html>
